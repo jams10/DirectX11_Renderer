@@ -35,6 +35,8 @@ namespace NAMESPACE
 		{
 			if (window.ProcessMessages() == 0)
 				return 0;
+
+			Render();
 		}
 	}
 

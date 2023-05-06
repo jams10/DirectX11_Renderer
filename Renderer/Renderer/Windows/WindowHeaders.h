@@ -11,5 +11,5 @@
 
 #define STRICT              // 기호를 정의할 때 형식을 선언하고 사용하는 데 더 주의해야 하는 기능을 사용하도록 설정.
                             // 코드 작성시 추가적으로 주의를 기울이게 되어 디버깅 시간이 단축됨. Windows 코드에 특히 유용함.
-
+#include <stdint.h>
 #include <Windows.h>

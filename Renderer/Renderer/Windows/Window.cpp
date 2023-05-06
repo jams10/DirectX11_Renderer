@@ -100,7 +100,7 @@ namespace NAMESPACE {
 		// 윈도우 화면에 띄우기.
 		ShowWindow(m_hWnd, SW_SHOWDEFAULT);
 
-		cout << "Window has initialized successfully.\n";
+		cout << "Success : Window has initialized!\n";
 		return true;
 	}
 
