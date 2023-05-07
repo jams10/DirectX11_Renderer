@@ -1,8 +1,11 @@
 #pragma once
 
 #include <Windows/Window.h>
+#include <UI/ImguiManager.h>
 
-namespace NAMESPACE {
+namespace NAMESPACE 
+{
+	class Graphics;
 
 	class AppBase
 	{
@@ -21,6 +24,8 @@ namespace NAMESPACE {
 
 	protected:
 		Window window;
+		Graphics* graphics;
+		ImguiManager imguiManager;
 		int m_screenWidth;
 		int m_screenHeight;
 	};

@@ -40,6 +40,7 @@ namespace NAMESPACE {
 		bool SetTitle(const wstring& title);
 		static int ProcessMessages() noexcept; // 모든 윈도우에 대한 메시지를 처리해야 하므로 static으로 선언함.
 		HWND GetWindowHandle() { return m_hWnd; }
+		void ShutDownImGUI();
 
 	private:
 		static LRESULT CALLBACK HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;

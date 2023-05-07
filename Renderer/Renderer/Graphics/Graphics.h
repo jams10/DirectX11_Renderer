@@ -21,7 +21,8 @@ namespace NAMESPACE
 
 		bool Initialize(int, int, HWND);
 		void Shutdown();
-		bool Render(float dt);
+		bool BeginFrame(float red, float green, float blue, float alpha);
+		bool EndFrame();
 
 	private:
 		D3DGraphics* m_pD3D;

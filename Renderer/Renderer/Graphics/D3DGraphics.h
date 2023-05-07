@@ -35,6 +35,8 @@ namespace NAMESPACE
 		bool CreateDepthBuffer(ComPtr<ID3D11Device>& device, int screenWidth, int screenHeight,
 			UINT& numQualityLevels, ComPtr<ID3D11DepthStencilView>& depthStencilView);
 
+		void ShutdownImGUI();
+
 	private:
 		// 기본 렌더링 필요 자원.
 		ComPtr<ID3D11Device> m_pDevice;

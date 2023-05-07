@@ -36,6 +36,9 @@
     <ClInclude Include="Graphics\Graphics.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="UI\ImguiManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Graphics\D3DGraphics.cpp">
@@ -54,6 +57,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Graphics\Graphics.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\ImguiManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

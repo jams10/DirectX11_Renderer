@@ -5,8 +5,6 @@
 
 namespace NAMESPACE
 {
-    class Graphics;
-
 	class ExampleApp : public AppBase
 	{
     public:

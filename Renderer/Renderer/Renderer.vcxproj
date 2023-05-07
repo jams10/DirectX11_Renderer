@@ -136,6 +136,7 @@
     <ClInclude Include="Application\ExampleApp.h" />
     <ClInclude Include="Graphics\D3DGraphics.h" />
     <ClInclude Include="Graphics\Graphics.h" />
+    <ClInclude Include="UI\ImguiManager.h" />
     <ClInclude Include="Utils\CustomMacros.h" />
     <ClInclude Include="Windows\Window.h" />
     <ClInclude Include="Windows\WindowHeaders.h" />
@@ -146,6 +147,7 @@
     <ClCompile Include="Application\main.cpp" />
     <ClCompile Include="Graphics\D3DGraphics.cpp" />
     <ClCompile Include="Graphics\Graphics.cpp" />
+    <ClCompile Include="UI\ImguiManager.cpp" />
     <ClCompile Include="Windows\Window.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

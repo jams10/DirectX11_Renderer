@@ -31,14 +31,19 @@ namespace NAMESPACE
 
     void Graphics::Shutdown()
     {
+        m_pD3D->ShutdownImGUI();
         SAFE_RELEASE(m_pD3D)
     }
 
-    bool Graphics::Render(float dt)
+    bool Graphics::BeginFrame(float red, float green, float blue, float alpha)
     {
-        m_pD3D->BeginFrame(0.5f, 0.65f, 0.98f, 1.0f);
-        m_pD3D->EndFrame();
+        m_pD3D->BeginFrame(red, green, blue, alpha);
+        return true;
+    }
 
+    bool Graphics::EndFrame()
+    {
+        m_pD3D->EndFrame();
         return true;
     }
 }

@@ -2,6 +2,7 @@
 #include "D3DGraphics.h"               
 #include <iostream>
 #include <d3dcompiler.h>
+#include <imgui_impl_dx11.h>
 
 #pragma comment(lib,"d3d11.lib")        // Direct3D 함수들이 정의된 라이브러리를 링크해줌.
 #pragma comment(lib, "D3DCompiler.lib") // 셰이더를 런타임에 컴파일 해줄 때 사용할 수 있지만, 우리는 셰이더를 불러오는 함수를 사용하기 위해 연결해줬음. 
@@ -19,6 +20,7 @@ namespace NAMESPACE
 
 	D3DGraphics::~D3DGraphics()
 	{
+        cout << "Destroy D3DGraphics." << '\n';
 	}
 
 	bool D3DGraphics::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hWnd, float screenDepth, float screenNear)
@@ -156,6 +158,14 @@ namespace NAMESPACE
         if (FAILED(m_pDevice->CreateDepthStencilState(&depthStencilDesc, m_pDepthStencilState.GetAddressOf()))) 
         {
             cout << "Failed : CreateDepthStencilState()\n";
+            __ERRORLINE__
+            return false;
+        }
+
+        // imgui dx11 구현 초기화.
+        if (ImGui_ImplDX11_Init(m_pDevice.Get(), m_pContext.Get()) == false)
+        {
+            cout << "Failed : ImGui_ImplDX11_Init()\n";
             __ERRORLINE__
             return false;
         }
@@ -345,6 +355,12 @@ namespace NAMESPACE
             return false;
         }
         return true;
+    }
+    
+    void D3DGraphics::ShutdownImGUI()
+    {
+        cout << "Shutdown Imgui DX11." << '\n';
+        ImGui_ImplDX11_Shutdown();
     }
 }
 

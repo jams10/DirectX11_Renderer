@@ -1,6 +1,8 @@
 
 #include "Window.h"
+
 #include <iostream>
+#include <imgui_impl_win32.h>
 
 namespace NAMESPACE {
 
@@ -61,7 +63,14 @@ namespace NAMESPACE {
 	// Window 클래스 소멸자. 생성한 윈도우 파괴.
 	Window::~Window()
 	{
+		cout << "Destroy Window." << '\n';
 		DestroyWindow(m_hWnd);
+	}
+
+	void Window::ShutDownImGUI()
+	{
+		cout << "Shutdown Imgui Win32." << '\n';
+		ImGui_ImplWin32_Shutdown();
 	}
 
 	bool Window::Initialize(const wchar_t* name, int width, int height)
@@ -97,8 +106,19 @@ namespace NAMESPACE {
 			return false;
 		}
 
+		// Imgui Win32 구현 초기화.
+		if (ImGui_ImplWin32_Init(m_hWnd) == false)
+		{
+			cout << "Failed : ImGui_ImplWin32_Init()" << '\n';
+			__ERRORLINE__
+			return false;
+		}
+
 		// 윈도우 화면에 띄우기.
 		ShowWindow(m_hWnd, SW_SHOWDEFAULT);
+
+		// 콘솔창이 렌더링 창을 덮는 것을 방지.
+		SetForegroundWindow(m_hWnd);
 
 		cout << "Success : Window has initialized!\n";
 		return true;
