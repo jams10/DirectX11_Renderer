@@ -45,7 +45,7 @@ namespace NAMESPACE
         D3D_FEATURE_LEVEL featureLevel;
 
 #pragma region Create : Device, Device Context
-        if (FAILED(D3D11CreateDevice(
+        THROWFAILED(D3D11CreateDevice(
             nullptr,                        // Specify nullptr to use the default adapter.
             driverType,                     // Create a device using the hardware graphics driver.
             0,                              // Should be 0 unless the driver is D3D_DRIVER_TYPE_SOFTWARE.
@@ -56,11 +56,7 @@ namespace NAMESPACE
             device.GetAddressOf(),          // Returns the Direct3D device created.
             &featureLevel,                  // Returns feature level of device created.
             context.GetAddressOf()          // Returns the device immediate context.
-        ))) {
-            cout << "Failed : D3D11CreateDevice()\n";
-            __ERRORLINE__
-            return false;
-        }
+        ));
 
         if (featureLevel != D3D_FEATURE_LEVEL_11_0) {
             cout << "Failed : D3D Feature Level 11 unsupported.\n";
@@ -75,17 +71,9 @@ namespace NAMESPACE
         }
 
         // 생성한 device, device context COM 인터페이스를 가져와 캐싱.
-        if (FAILED(device.As(&m_pDevice))) {
-            cout << "Failed : device.AS()\n";
-            __ERRORLINE__
-            return false;
-        }
+        THROWFAILED(device.As(&m_pDevice));
 
-        if (FAILED(context.As(&m_pContext))) {
-            cout << "Failed: context.As()\n";
-            __ERRORLINE__
-            return false;
-        }
+        THROWFAILED(context.As(&m_pContext));
 #pragma endregion
 
 #pragma region Create : Swapchain
@@ -113,17 +101,13 @@ namespace NAMESPACE
             sd.SampleDesc.Quality = 0;
         }
 
-        if (FAILED(D3D11CreateDeviceAndSwapChain(
+        THROWFAILED(D3D11CreateDeviceAndSwapChain(
             0, // Default adapter
             driverType,
             0, // No software device
             createDeviceFlags, featureLevels, 1, D3D11_SDK_VERSION, &sd,
             m_pSwapChain.GetAddressOf(), m_pDevice.GetAddressOf(), &featureLevel,
-            m_pContext.GetAddressOf()))) {
-            cout << "Faild : D3D11CreateDeviceAndSwapChain()\n";
-            __ERRORLINE__
-            return false;
-        }
+            m_pContext.GetAddressOf()));
 #pragma endregion
 
         if (CreateRenderTargetView() == false) return false;
@@ -155,12 +139,7 @@ namespace NAMESPACE
         depthStencilDesc.DepthEnable = true; // false
         depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
         depthStencilDesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS_EQUAL;
-        if (FAILED(m_pDevice->CreateDepthStencilState(&depthStencilDesc, m_pDepthStencilState.GetAddressOf()))) 
-        {
-            cout << "Failed : CreateDepthStencilState()\n";
-            __ERRORLINE__
-            return false;
-        }
+        THROWFAILED(m_pDevice->CreateDepthStencilState(&depthStencilDesc, m_pDepthStencilState.GetAddressOf()));
 
         // imgui dx11 구현 초기화.
         if (ImGui_ImplDX11_Init(m_pDevice.Get(), m_pContext.Get()) == false)
@@ -228,66 +207,38 @@ namespace NAMESPACE
         {
             m_pDevice->CreateRenderTargetView(backBuffer.Get(), nullptr, m_pRenderTargetView.GetAddressOf());
 
-            // MSAA를 사용할 경우 backBuffer가 Texture2D가 아니라 Texture2DMS
-            // 입니다. 렌더링이 끝난 후에 backBuffer(Texture2DMS)를
-            // m_tempTexture(Texture2D)로 변환한 다음에
-            // 후처리 필터에 Resource로 넣어주기 위한 부분입니다.
-
-            // m_device->CreateShaderResourceView(backBuffer.Get(), nullptr,
-            // m_shaderResourceView.GetAddressOf());
+            // MSAA를 사용할 경우 backbuffer의 텍스쳐가 Texture2DMS임.
+            // backbuffer에 씬을 렌더링한 뒤에 Texture2DMS를 Texture2D로 바꾸어서 후처리 작업을 위한 필터에 ShaderResource로 넣어주어야 함.
 
             D3D11_TEXTURE2D_DESC desc;
             backBuffer->GetDesc(&desc); // Swapchain 생성시 자동으로 생성된 backbuffer 용도의 텍스쳐 서술자를 그대로 가져옴.
-            // 디버깅용
-            // cout << desc.Width << " " << desc.Height << " " << desc.Format <<
-            // endl;
+
             desc.SampleDesc.Count = 1;
             desc.SampleDesc.Quality = 0;
             desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
             desc.MiscFlags = 0;
 
-            if (FAILED(m_pDevice->CreateTexture2D(&desc, nullptr, m_pTempTexture.GetAddressOf()))) 
-            {
-                cout << "Failed : CreateTexture2D\n";
-                __ERRORLINE__
-                return false;
-            }
+            THROWFAILED(m_pDevice->CreateTexture2D(&desc, nullptr, m_pTempTexture.GetAddressOf()));
 
-            if (FAILED(m_pDevice->CreateTexture2D(&desc, nullptr, m_pIndexTempTexture.GetAddressOf()))) 
-            {
-                cout << "Failed : CreateTexture2D\n";
-                __ERRORLINE__
-                return false;
-            }
+            THROWFAILED(m_pDevice->CreateTexture2D(&desc, nullptr, m_pIndexTempTexture.GetAddressOf()));
 
             // ShaderResource를 (backBuffer가 아니라) tempTexture로부터 생성
             m_pDevice->CreateShaderResourceView(m_pTempTexture.Get(), nullptr, m_pShaderResourceView.GetAddressOf());
 
-            // 1x1 작은 스테이징 텍스춰 만들기
+            // 마우스 피킹에 사용할 1x1 크기의 작은 스테이징 텍스쳐 만들기
             desc.BindFlags = 0;
             desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
             desc.Usage = D3D11_USAGE_STAGING;
             desc.Width = 1;
             desc.Height = 1;
 
-            if (FAILED(m_pDevice->CreateTexture2D(&desc, nullptr, m_pIndexStagingTexture.GetAddressOf()))) 
-            {
-                cout << "Failed : CreateTexture2D\n";
-                __ERRORLINE__
-                return false;
-            }
+            THROWFAILED(m_pDevice->CreateTexture2D(&desc, nullptr, m_pIndexStagingTexture.GetAddressOf()));
 
-            // 마우스 피킹에 사용할 인덱스 색을 렌더링할 텍스춰와 렌더타겟 생성
+            // 마우스 피킹에 사용할 인덱스에 해당하는 색을 렌더링할 텍스쳐와 렌더타겟 생성
             backBuffer->GetDesc(&desc); // BackBuffer와 동일한 설정
-            if (FAILED(m_pDevice->CreateTexture2D(&desc, nullptr, m_pIndexTexture.GetAddressOf()))) 
-            {
-                cout << "Failed : CreateTexture2D\n";
-                __ERRORLINE__
-                return false;
-            }
+            THROWFAILED(m_pDevice->CreateTexture2D(&desc, nullptr, m_pIndexTexture.GetAddressOf()));
 
             m_pDevice->CreateRenderTargetView(m_pIndexTexture.Get(), nullptr, m_pIndexRenderTargetView.GetAddressOf());
-
         }
         else 
         {
@@ -340,20 +291,11 @@ namespace NAMESPACE
 
         ComPtr<ID3D11Texture2D> depthStencilBuffer;
 
-        if (FAILED(device->CreateTexture2D(&depthStencilBufferDesc, 0, depthStencilBuffer.GetAddressOf()))) 
-        {
-            std::cout << "Failed : CreateTexture2D()\n";
-            __ERRORLINE__
-            return false;
-        }
+        THROWFAILED(device->CreateTexture2D(&depthStencilBufferDesc, 0, depthStencilBuffer.GetAddressOf()));
 
         // 깊이 스텐실 텍스쳐에 대한 뷰 생성.
-        if (FAILED(device->CreateDepthStencilView(depthStencilBuffer.Get(), 0, depthStencilView.GetAddressOf()))) 
-        {
-            std::cout << "Failed : CreateDepthStencilView()\n";
-            __ERRORLINE__
-            return false;
-        }
+        THROWFAILED(device->CreateDepthStencilView(depthStencilBuffer.Get(), 0, depthStencilView.GetAddressOf()));
+
         return true;
     }
     

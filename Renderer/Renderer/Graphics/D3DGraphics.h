@@ -4,11 +4,22 @@
 #include <Windows/WindowHeaders.h>
 #include <DirectXMath.h>
 #include <d3d11.h>
+#include <exception>
 #include <wrl.h>
 
 namespace NAMESPACE
 {
 	using Microsoft::WRL::ComPtr;
+
+#define THROWFAILED(x) ThrowIfFailed(x)
+
+	inline void ThrowIfFailed(HRESULT hr) 
+	{
+		if (FAILED(hr)) 
+		{
+			throw std::exception();
+		}
+	}
 
 	class D3DGraphics
 	{
