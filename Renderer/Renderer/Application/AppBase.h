@@ -2,10 +2,13 @@
 
 #include <Windows/Window.h>
 #include <UI/ImguiManager.h>
+#include <thread>
 
 namespace NAMESPACE 
 {
 	class Graphics;
+	class FileLoader;
+	using std::thread;
 
 	class AppBase
 	{
@@ -24,10 +27,17 @@ namespace NAMESPACE
 
 	protected:
 		Window window;
-		Graphics* graphics;
 		ImguiManager imguiManager;
+		Graphics* graphics;
+		FileLoader* fileLoader;
 		int m_screenWidth;
 		int m_screenHeight;
+
+		/*
+		*	Threads
+		*/
+		//thread assetLoadThread; // 모델, 텍스쳐등을 로드하는 스레드.
+		//thread renderThread;    // 렌더링을 처리하는 스레드.
 	};
 
 }

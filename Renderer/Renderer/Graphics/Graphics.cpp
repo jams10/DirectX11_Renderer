@@ -13,7 +13,8 @@ namespace NAMESPACE
 
     Graphics::~Graphics()
     {
-        Shutdown();
+        if(m_pD3D != nullptr)
+            Shutdown();
     }
 
     bool Graphics::Initialize(int screenWidth, int screenHeight, HWND wnd)

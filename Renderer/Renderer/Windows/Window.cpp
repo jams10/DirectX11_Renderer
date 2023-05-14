@@ -4,6 +4,13 @@
 #include <iostream>
 #include <imgui_impl_win32.h>
 
+// imgui_impl_win32.cpp에 정의된 메시지 처리 함수에 대한 전방 선언
+// VCPKG를 통해 IMGUI를 사용할 경우 빨간줄로 경고가 뜰 수 있음
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd,
+														     UINT msg,
+														     WPARAM wParam,
+														     LPARAM lParam);
+
 namespace NAMESPACE {
 
 	using std::cout;
@@ -192,6 +199,10 @@ namespace NAMESPACE {
 	// 실제 윈도우 메시지를 처리해 줄 함수.
 	LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 	{
+		// ImGui에 대한 입력인 경우 ImGui가 consume.
+		if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
+			return true;
+
 		switch (msg)
 		{
 		case WM_DESTROY:

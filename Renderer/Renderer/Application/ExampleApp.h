@@ -1,10 +1,17 @@
 #pragma once
 
+#include <vector>
+
 #include <Utils/CustomMacros.h>
+#include <Model/ModelData.h>
+#include <Scene/SceneBase.h>
+
 #include "AppBase.h"
 
 namespace NAMESPACE
 {
+    using std::vector;
+
 	class ExampleApp : public AppBase
 	{
     public:
@@ -18,7 +25,13 @@ namespace NAMESPACE
         virtual void Render() override;
 
     private:
-        Graphics* graphics;
+        /*
+        *   UI
+        */
+        bool m_openSystemInfoWindow = false;
+        bool m_openModelWindow = false;
+
+        SceneBase* currentScene;
 	};
 }
 

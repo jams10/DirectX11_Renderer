@@ -2,6 +2,7 @@
 #include "AppBase.h"
 #include <iostream>
 #include <Graphics/Graphics.h>
+#include <Utils/FileLoader.h>
 #include <imgui_impl_dx11.h>
 #include <imgui_impl_win32.h>
 
@@ -21,8 +22,13 @@ namespace NAMESPACE
 	AppBase::~AppBase()
 	{
 		// Imgui를 닫을 때 renderer backend(DX11)를 platform backend(win32) 보다 먼저 닫아주어야 함.
-		graphics->Shutdown();
+		if (graphics != nullptr)
+			graphics->Shutdown();
+		
 		window.ShutDownImGUI();
+
+		SAFE_RELEASE(graphics)
+		SAFE_RELEASE(fileLoader)
 	}
 
 	bool AppBase::Initialize()
@@ -44,6 +50,9 @@ namespace NAMESPACE
 				return false;
 		}
 
+		// FileLoader 생성.
+		fileLoader = new FileLoader(window);
+
 		return true;
 	}
 
@@ -57,21 +66,17 @@ namespace NAMESPACE
 			ImGui_ImplDX11_NewFrame(); // GUI 프레임 시작
 			ImGui_ImplWin32_NewFrame();
 
-			ImGui::NewFrame(); // 어떤 것들을 렌더링 할지 기록 시작
-			ImGui::Begin("Scene Control");
+			ImGui::NewFrame(); // IMGUI 렌더링 시작.
 
-			// ImGui가 측정해주는 Framerate 출력
-			ImGui::Text("Average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+			UpdateGUI(); // GUI 추가.
 
-			UpdateGUI(); // 추가적으로 사용할 GUI
-			ImGui::SetWindowPos(ImVec2(0.0f, 0.0f));
-
-			ImGui::End();
 			ImGui::Render(); // 렌더링할 것들 기록 끝.
 			
 			Update(ImGui::GetIO().DeltaTime); // 씬 업데이트.
 
-			graphics->BeginFrame(0.5f, 0.65f, 0.98f, 1.0f);
+			//graphics->BeginFrame(0.5f, 0.65f, 0.98f, 1.0f);
+			graphics->BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
+			
 			// Scene Render.
 
 			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData()); // GUI 렌더링.

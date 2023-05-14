@@ -16,6 +16,9 @@ namespace NAMESPACE
 
 		ImGuiIO& io = ImGui::GetIO();
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
+		
+		// 한글 폰트 추가.
+		io.Fonts->AddFontFromFileTTF("..\\Resources\\Fonts\\SUITE-SemiBold.ttf", 16.0f, NULL, io.Fonts->GetGlyphRangesKorean());
 
 		ImGui::StyleColorsDark(); // ui 테마를 검정색으로 설정해줌.
 	}

@@ -92,11 +92,13 @@ namespace NAMESPACE
         sd.Windowed = TRUE;                                // windowed/full-screen mode
         sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH; // allow full-screen switching
         sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-        if (numQualityLevels > 0) {
+        if (numQualityLevels > 0) // MSAA 사용시 설정해주는 옵션.
+        {
             sd.SampleDesc.Count = 4; // how many multisamples
             sd.SampleDesc.Quality = numQualityLevels - 1;
         }
-        else {
+        else 
+        {
             sd.SampleDesc.Count = 1; // how many multisamples
             sd.SampleDesc.Quality = 0;
         }
@@ -166,15 +168,10 @@ namespace NAMESPACE
         float clearColor[4] = { red, green, blue, alpha };
         m_pContext->ClearRenderTargetView(m_pRenderTargetView.Get(), clearColor);
 
-        // 마우스 피킹에 사용할 indexRenderTarget도 초기화
-        m_pContext->ClearRenderTargetView(m_pIndexRenderTargetView.Get(), clearColor);
-
         m_pContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-        // Multiple render targets
-        // 인덱스를 저장할 RenderTarget을 추가
-        ID3D11RenderTargetView* targets[] = { m_pRenderTargetView.Get(), m_pIndexRenderTargetView.Get() };
-        m_pContext->OMSetRenderTargets(2, targets, m_pDepthStencilView.Get());
+        ID3D11RenderTargetView* targets[] = { m_pRenderTargetView.Get()};
+        m_pContext->OMSetRenderTargets(1, targets, m_pDepthStencilView.Get());
         m_pContext->OMSetDepthStencilState(m_pDepthStencilState.Get(), 0);
 
         if (m_drawAsWire) // wire 프레임 선택한 경우 와이어 프레임 모드로 래스터라이저 스테이트 변경, 와이어 프레임으로 그려줌.
@@ -220,25 +217,8 @@ namespace NAMESPACE
 
             THROWFAILED(m_pDevice->CreateTexture2D(&desc, nullptr, m_pTempTexture.GetAddressOf()));
 
-            THROWFAILED(m_pDevice->CreateTexture2D(&desc, nullptr, m_pIndexTempTexture.GetAddressOf()));
-
             // ShaderResource를 (backBuffer가 아니라) tempTexture로부터 생성
             m_pDevice->CreateShaderResourceView(m_pTempTexture.Get(), nullptr, m_pShaderResourceView.GetAddressOf());
-
-            // 마우스 피킹에 사용할 1x1 크기의 작은 스테이징 텍스쳐 만들기
-            desc.BindFlags = 0;
-            desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-            desc.Usage = D3D11_USAGE_STAGING;
-            desc.Width = 1;
-            desc.Height = 1;
-
-            THROWFAILED(m_pDevice->CreateTexture2D(&desc, nullptr, m_pIndexStagingTexture.GetAddressOf()));
-
-            // 마우스 피킹에 사용할 인덱스에 해당하는 색을 렌더링할 텍스쳐와 렌더타겟 생성
-            backBuffer->GetDesc(&desc); // BackBuffer와 동일한 설정
-            THROWFAILED(m_pDevice->CreateTexture2D(&desc, nullptr, m_pIndexTexture.GetAddressOf()));
-
-            m_pDevice->CreateRenderTargetView(m_pIndexTexture.Get(), nullptr, m_pIndexRenderTargetView.GetAddressOf());
         }
         else 
         {

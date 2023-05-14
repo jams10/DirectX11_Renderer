@@ -59,13 +59,6 @@ namespace NAMESPACE
 		// 렌더타겟의 Texture2DMS를 Texture2D로 복사하기 위한 임시 Texture
 		ComPtr<ID3D11Texture2D> m_pTempTexture;
 
-		// Picking을 위한 Index를 저장할 Texture
-		ComPtr<ID3D11Texture2D> m_pIndexTexture;
-		ComPtr<ID3D11Texture2D> m_pIndexTempTexture;    // Texture2DMS -> Texture2D
-		ComPtr<ID3D11Texture2D> m_pIndexStagingTexture; // 1x1 작은 크기
-		ComPtr<ID3D11RenderTargetView> m_pIndexRenderTargetView;
-		uint8_t m_pickColor[4] = {0,};                  // 이 색을 이용해서 물체가 선택(pick)되었는지 판단
-
 		// 래스터라이저
 		ComPtr<ID3D11RasterizerState> m_pRasterizerSate;
 		ComPtr<ID3D11RasterizerState> m_pWireRasterizerSate;
