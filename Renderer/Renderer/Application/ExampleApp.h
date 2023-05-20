@@ -29,7 +29,7 @@ namespace NAMESPACE
         *   UI
         */
         bool m_openSystemInfoWindow = false;
-        bool m_openModelWindow = false;
+        bool m_openSceneSelectWindow = false;
 
         SceneBase* currentScene;
 	};

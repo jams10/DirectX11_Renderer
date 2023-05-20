@@ -35,16 +35,17 @@ namespace NAMESPACE
 
 		void BeginFrame(float red, float green, float blue, float alpha) noexcept;
 		void EndFrame();
+		void PresentScene();
 
 		ID3D11Device* GetDevice() const { return m_pDevice.Get(); }
 		ID3D11DeviceContext* GetContext() const { return m_pContext.Get(); }
 		IDXGISwapChain* GetSwapChain() const { return m_pSwapChain.Get(); }
 		ID3D11DepthStencilView* GetDepthStencilView() const { return m_pDepthStencilView.Get(); }
 
-		bool CreateRenderTargetView();
+		bool CreateBuffers();
 		void SetViewport(int screenWidth, int screenHeight);
 		bool CreateDepthBuffer(ComPtr<ID3D11Device>& device, int screenWidth, int screenHeight,
-			UINT& numQualityLevels, ComPtr<ID3D11DepthStencilView>& depthStencilView);
+			UINT numQualityLevels, ComPtr<ID3D11DepthStencilView>& depthStencilView);
 
 		void ShutdownImGUI();
 
@@ -52,12 +53,16 @@ namespace NAMESPACE
 		// 기본 렌더링 필요 자원.
 		ComPtr<ID3D11Device> m_pDevice;
 		ComPtr<ID3D11DeviceContext> m_pContext;
-		ComPtr<ID3D11RenderTargetView> m_pRenderTargetView;
-		ComPtr<ID3D11ShaderResourceView> m_pShaderResourceView;
+		ComPtr<ID3D11RenderTargetView> m_pBackbufferRTV;
 		ComPtr<IDXGISwapChain> m_pSwapChain;
 
-		// 렌더타겟의 Texture2DMS를 Texture2D로 복사하기 위한 임시 Texture
-		ComPtr<ID3D11Texture2D> m_pTempTexture;
+		// 렌더링에 필요한 버퍼.
+		ComPtr<ID3D11Texture2D> m_pFloatBuffer;      // 씬 렌더용 float 픽셀 포맷 + MSAA를 사용하는 렌더 타겟 용 버퍼.
+		ComPtr<ID3D11Texture2D> m_pResolvedBuffer;   // floatBuffer를 resolve해서 포스트 프로세싱의 입력으로 사용할 버퍼.
+		ComPtr<ID3D11RenderTargetView> m_pFloatRTV;
+		ComPtr<ID3D11RenderTargetView> m_pResolvedRTV;
+		ComPtr<ID3D11ShaderResourceView> m_pFloatSRV;
+		ComPtr<ID3D11ShaderResourceView> m_pResolvedSRV;
 
 		// 래스터라이저
 		ComPtr<ID3D11RasterizerState> m_pRasterizerSate;
@@ -71,7 +76,8 @@ namespace NAMESPACE
 
 		D3D11_VIEWPORT m_screenViewport;
 		bool m_bEnableVsync;
-		UINT numQualityLevels = 0;
+		bool m_useMSAA = true;
+		UINT m_numQualityLevels = 0;
 		int m_screenWidth;
 		int m_screenHeight;
 	};
