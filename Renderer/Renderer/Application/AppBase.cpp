@@ -74,17 +74,14 @@ namespace NAMESPACE
 			
 			Update(ImGui::GetIO().DeltaTime); // 씬 업데이트.
 
+			//graphics->BeginFrame(0.5f, 0.65f, 0.98f, 1.0f);
 			graphics->BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
 			
-			// 씬 렌더링.
-
-			graphics->EndFrame();
-
-			// 포스트 프로세싱.
+			// Scene Render.
 
 			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData()); // GUI 렌더링.
 
-			graphics->PresentScene(); // 여기서 Swapchain의 Present 호출해 back buffer와 front buffer를 교체.
+			graphics->EndFrame(); // 여기서 Swapchain의 Present 호출해 back buffer와 front buffer를 교체.
 		}
 	}
 

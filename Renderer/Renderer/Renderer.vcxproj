@@ -142,7 +142,6 @@
     <ClInclude Include="Model\ModelData.h" />
     <ClInclude Include="Model\Vertex.h" />
     <ClInclude Include="Scene\SceneBase.h" />
-    <ClInclude Include="Scene\Scene_BlinnPhong.h" />
     <ClInclude Include="UI\ImguiManager.h" />
     <ClInclude Include="Utils\CustomMacros.h" />
     <ClInclude Include="Utils\FileLoader.h" />
@@ -158,7 +157,6 @@
     <ClCompile Include="Graphics\D3DGraphics.cpp" />
     <ClCompile Include="Graphics\Graphics.cpp" />
     <ClCompile Include="Scene\SceneBase.cpp" />
-    <ClCompile Include="Scene\Scene_BlinnPhong.cpp" />
     <ClCompile Include="UI\ImguiManager.cpp" />
     <ClCompile Include="Utils\FileLoader.cpp" />
     <ClCompile Include="Utils\ModelLoader.cpp" />

@@ -31,25 +31,32 @@ namespace NAMESPACE
 				if (ImGui::MenuItem(WideToMultiU8(L"시스템 정보").c_str()))
 					m_openSystemInfoWindow = true;
 
-				if (ImGui::MenuItem(WideToMultiU8(L"씬").c_str()))
-				{
-					m_openSceneSelectWindow = true;
-				}
-
+				if (ImGui::MenuItem(WideToMultiU8(L"모델").c_str()))
+					m_openModelWindow = true;
 				ImGui::EndMenu();
 			}
 		}
 		ImGui::EndMainMenuBar();
 
-		// 씬 선택 창.
-		if (m_openSceneSelectWindow)
+		// 시스템 정보 창.
+		if (m_openSystemInfoWindow)
 		{
-			ImGui::Begin(WideToMultiU8(L"Select Scene").c_str(), &m_openSceneSelectWindow);
+			ImGui::Begin(WideToMultiU8(L"시스템 정보").c_str(), &m_openSystemInfoWindow);
 			{
-				ImGui::Text(WideToMultiU8(L"모든 씬은 HDR 파이프라인을 사용합니다.").c_str());
-				if (ImGui::Button(WideToMultiU8(L"Blinn-Phong Shading Model").c_str()))
+				// ImGui가 측정해주는 Framerate 출력.
+				ImGui::Text("Average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+			}
+			ImGui::End();
+		}
+		// 모델 정보 창.
+		if (m_openModelWindow)
+		{
+			ImGui::Begin(WideToMultiU8(L"모델").c_str(), &m_openModelWindow);
+			{
+				if (ImGui::Button(WideToMultiU8(L"모델 파일 불러오기").c_str()))
 				{
-					
+					// WINAPI 이용, 다이얼로그 창 띄워서 파일 선택.
+					fileLoader->LoadModel();
 				}
 			}
 			ImGui::End();

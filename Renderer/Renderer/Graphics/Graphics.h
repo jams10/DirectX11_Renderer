@@ -23,7 +23,6 @@ namespace NAMESPACE
 		void Shutdown();
 		bool BeginFrame(float red, float green, float blue, float alpha);
 		bool EndFrame();
-		void PresentScene();
 
 	private:
 		D3DGraphics* m_pD3D;

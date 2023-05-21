@@ -47,9 +47,5 @@ namespace NAMESPACE
         m_pD3D->EndFrame();
         return true;
     }
-    void Graphics::PresentScene()
-    {
-        m_pD3D->PresentScene();
-    }
 }
 
